@@ -269,61 +269,67 @@ fn main() {
 
     loop {
         let mut rng = rand::thread_rng();
-        let mut random_number: u8 = rng.gen_range(2, 6);
-        println!("Random number: {}", random_number);
+        let mut random_row: u8 = rng.gen_range(2, 6);
+        let mut random_inv: u8 = rng.gen_range(2, 6);
+        println!("Random number: {}", random_row);
 
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "aaaaaaaaaaaaaaa".as_bytes(),
         );
 
-        random_number = rng.gen_range(2, 6);
+        random_row = rng.gen_range(2, 6);
+        random_inv = rng.gen_range(2, 6);
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "bbbbbbbbbbbbbbb".as_bytes(),
         );
 
-        random_number = rng.gen_range(2, 6);
+        random_row = rng.gen_range(2, 6);
+        random_inv = rng.gen_range(2, 6);
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "ccccccccccccccc".as_bytes(),
         );
 
-        random_number = rng.gen_range(2, 6);
+        random_row = rng.gen_range(2, 6);
+        random_inv = rng.gen_range(2, 6);
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "ddddddddddddddd".as_bytes(),
         );
 
-        random_number = rng.gen_range(2, 6);
+        random_row = rng.gen_range(2, 6);
+        random_inv = rng.gen_range(2, 6);
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "eeeeeeeeeeeeeee".as_bytes(),
         );
 
-        random_number = rng.gen_range(2, 6);
+        random_row = rng.gen_range(2, 6);
+        random_inv = rng.gen_range(2, 6);
         small_oled_display.display_text_18x8(
-            random_number as u8,
+            random_row as u8,
             0,
-            0,
+            random_inv % 2,
             "fffffffffffffff".as_bytes(),
         );
 
-        //random_number = rng.gen_range(2,6);
-        //small_oled_display.display_text_18x8_fast( &i2c_p , random_number as u8,0,0, "ccccccccccccccc".as_bytes() );
+        //random_row = rng.gen_range(2,6);
+        //small_oled_display.display_text_18x8_fast( &i2c_p , random_row as u8,0,0, "ccccccccccccccc".as_bytes() );
 
-        //random_number = rng.gen_range(2,6);
-        //small_oled_display.display_text_18x8_fast( &i2c_p , random_number as u8,0,0, "ddddddddddddddd".as_bytes() );
+        //random_row = rng.gen_range(2,6);
+        //small_oled_display.display_text_18x8_fast( &i2c_p , random_row as u8,0,0, "ddddddddddddddd".as_bytes() );
 
         sleep(Duration::from_millis(100));
     }
