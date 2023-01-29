@@ -224,11 +224,11 @@ impl Display {
 
         if inv == 1 {
             // Show Character
-            self.oled_data(Display::font_table(the_char.into())[0]);
-            self.oled_data(Display::font_table(the_char.into())[1]);
-            self.oled_data(Display::font_table(the_char.into())[2]);
-            self.oled_data(Display::font_table(the_char.into())[3]);
-            self.oled_data(Display::font_table(the_char.into())[4]);
+            self.oled_data(!Display::font_table(the_char.into())[0]);
+            self.oled_data(!Display::font_table(the_char.into())[1]);
+            self.oled_data(!Display::font_table(the_char.into())[2]);
+            self.oled_data(!Display::font_table(the_char.into())[3]);
+            self.oled_data(!Display::font_table(the_char.into())[4]);
             self.oled_data(0xFF);
         } else {
             // Show Character
