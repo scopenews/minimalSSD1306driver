@@ -34,7 +34,8 @@ const SPI_OLED_ADDRESS: u16 = 0x3C;
 
 struct Display {
     i2c: I2c,
-    screen_cache: [[u8; 8]; 21],
+    screen_char_cache: [[u8; 22]; 8],
+    screen_inverse_cache: [[u8; 22]; 8],
 }
 
 impl Display {
@@ -42,7 +43,8 @@ impl Display {
         let i2c = I2c::new().unwrap();
         Display {
             i2c,
-            screen_cache: [[0xFF; 8]; 21],
+            screen_char_cache: [[0xFF; 22]; 8],
+            screen_inverse_cache: [[0xFF; 22]; 8],
         }
     }
 
@@ -150,7 +152,7 @@ impl Display {
         the_fonts[character]
     }
 
-    fn clear_screen(&mut self, clearChar: u8) {
+    fn clear_screen(&mut self, clear_char: u8) {
         self.oled_command(SPI_OLED_COLUMNADDR); // 0x21 COMMAND
         self.oled_command(0); // Column start address
         self.oled_command(SPI_OLED_LCDWIDTH - 1); // Column end address
@@ -158,18 +160,16 @@ impl Display {
         self.oled_command(0); // Start Page address
         self.oled_command((SPI_OLED_LCDHEIGHT / 8) - 1); // End Page address
 
-        let mut screen_clear_array: [u8; 1025] = [clearChar; 1025];
+        let mut screen_clear_array: [u8; 1025] = [clear_char; 1025];
         screen_clear_array[0] = 0x40; // 1st byte of all OLED commands
         self.write_data_to_i2c(SPI_OLED_ADDRESS, &screen_clear_array);
 
-        // for row in 0u8..=7
-        // {
-        //     for row in 0u8..=22 {
-        //     {
-        // 		screenCache[row][col] = 0;
-        // 		screenInv[row][col]=0;
-        // 	}
-        // }
+        for row in 0..7 {
+            for col in 0..21 {
+                self.screen_char_cache[row][col] = 0;
+                self.screen_inverse_cache[row][col] = 0;
+            }
+        }
     }
 
     fn init_display(&mut self) {
@@ -213,8 +213,18 @@ impl Display {
     }
 
     fn show_font57_12864(&mut self, the_char: u8, row: u8, col: u8, inv: u8) {
-        // Set Display Char/Row Address
+        // if this char is already at this position, skip the write
+        if (self.screen_char_cache[row as usize][col as usize] == the_char)
+            && (self.screen_inverse_cache[row as usize][col as usize] == inv)
+        {
+            return;
+        }
 
+        // otherwise cache the written char and inverse setting
+        self.screen_char_cache[row as usize][col as usize] = the_char;
+        self.screen_inverse_cache[row as usize][col as usize] = inv;
+
+        // Set Display Char/Row Address
         self.oled_command(SPI_OLED_COLUMNADDR); // 0x21 COMMAND
         self.oled_command(col * 6); // Column start address
         self.oled_command(127); // Column end address
@@ -260,6 +270,13 @@ impl Display {
     }
 }
 
+fn random_stringz() -> String {
+    let mut rng = rand::thread_rng();
+    (0..20)
+        .map(|_| (rng.gen_range(32, 128) as u8) as char)
+        .collect()
+}
+
 fn main() {
     let mut small_oled_display = Display::new();
     sleep(Duration::from_millis(1000));
@@ -269,68 +286,59 @@ fn main() {
 
     loop {
         let mut rng = rand::thread_rng();
-        let mut random_row: u8 = rng.gen_range(2, 6);
+        let mut random_row: u8 = rng.gen_range(0, 8);
         let mut random_inv: u8 = rng.gen_range(2, 6);
-        println!("Random number: {}", random_row);
 
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "aaaaaaaaaaaaaaa".as_bytes(),
-        );
+        let mut random_string = random_stringz();
+        let mut random_slice: &[u8] = random_string.as_bytes();
 
-        random_row = rng.gen_range(2, 6);
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
+
+        random_string = random_stringz();
+        random_slice = random_string.as_bytes();
+        random_row = rng.gen_range(0, 8);
         random_inv = rng.gen_range(2, 6);
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "bbbbbbbbbbbbbbb".as_bytes(),
-        );
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
 
-        random_row = rng.gen_range(2, 6);
+        random_string = random_stringz();
+        random_slice = random_string.as_bytes();
+        random_row = rng.gen_range(0, 8);
         random_inv = rng.gen_range(2, 6);
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "ccccccccccccccc".as_bytes(),
-        );
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
 
-        random_row = rng.gen_range(2, 6);
+        random_string = random_stringz();
+        random_slice = random_string.as_bytes();
+        random_row = rng.gen_range(0, 8);
         random_inv = rng.gen_range(2, 6);
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "ddddddddddddddd".as_bytes(),
-        );
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
 
-        random_row = rng.gen_range(2, 6);
+        random_string = random_stringz();
+        random_slice = random_string.as_bytes();
+        random_row = rng.gen_range(0, 8);
         random_inv = rng.gen_range(2, 6);
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "eeeeeeeeeeeeeee".as_bytes(),
-        );
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
 
-        random_row = rng.gen_range(2, 6);
+        random_string = random_stringz();
+        random_slice = random_string.as_bytes();
+        random_row = rng.gen_range(0, 8);
         random_inv = rng.gen_range(2, 6);
-        small_oled_display.display_text_18x8(
-            random_row as u8,
-            0,
-            random_inv % 2,
-            "fffffffffffffff".as_bytes(),
-        );
+        small_oled_display.display_text_18x8(random_row as u8, 0, random_inv % 2, random_slice);
 
-        //random_row = rng.gen_range(2,6);
-        //small_oled_display.display_text_18x8_fast( &i2c_p , random_row as u8,0,0, "ccccccccccccccc".as_bytes() );
+        // println!("{}", "------------------------");
+        // println!();
+        // for row in 0..7 {
+        //     for col in 0..21 {
+        //         let ascii_char = (small_oled_display.screen_char_cache[row][col] + 32) as char;
 
-        //random_row = rng.gen_range(2,6);
-        //small_oled_display.display_text_18x8_fast( &i2c_p , random_row as u8,0,0, "ddddddddddddddd".as_bytes() );
+        //         if small_oled_display.screen_inverse_cache[row][col] == 1 {
+        //             print!("\x1B[7m{}\x1B[27m", ascii_char);
+        //         } else {
+        //             print!("{}", ascii_char);
+        //         }
+        //     }
+        //     println!();
+        // }
 
-        sleep(Duration::from_millis(100));
+        //sleep(Duration::from_millis(1000));
     }
 }
