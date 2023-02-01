@@ -1,3 +1,7 @@
+// this class returns the next ASCII letter, loops back once it gets
+// to the end. just a way to cough up ASCII letters for testing
+// the display
+
 pub struct AsciiLetter {
     ascii_letter: u8,
 }

@@ -57,7 +57,7 @@ impl I2cDisplay {
         for _ in 0..1025 {
             screen_clear_array_vec.push(clear_char);
         }
-        self.write_data_to_i2c(SPI_OLED_ADDRESS, &command_string);
+        self.write_data_to_i2c(SPI_OLED_ADDRESS, &screen_clear_array_vec);
     }
 
     pub fn init_display(&mut self) {
@@ -128,7 +128,7 @@ impl I2cDisplay {
             nc -= 32;
             let ncu = nc as usize;
 
-            if inverse_text == 1 {
+            if inverse_text == 0 {
                 data_string.push(Display::font_table(ncu)[0]);
                 data_string.push(Display::font_table(ncu)[1]);
                 data_string.push(Display::font_table(ncu)[2]);

@@ -147,7 +147,7 @@ impl SpiDisplay {
             nc -= 32;
             let ncu = nc as usize;
 
-            if inverse_text == 1 {
+            if inverse_text == 0 {
                 data_string.push(Display::font_table(ncu)[0]);
                 data_string.push(Display::font_table(ncu)[1]);
                 data_string.push(Display::font_table(ncu)[2]);
