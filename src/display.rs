@@ -1,14 +1,8 @@
-pub struct Display {
-    pub screen_char_cache: [[u8; 22]; 8],
-    pub screen_inverse_cache: [[u8; 22]; 8],
-}
+pub struct Display {}
 
 impl Display {
     pub fn new() -> Display {
-        Display {
-            screen_char_cache: [[0xFF; 22]; 8],
-            screen_inverse_cache: [[0xFF; 22]; 8],
-        }
+        Display {}
     }
 
     pub fn font_table(character: usize) -> [u8; 5] {
